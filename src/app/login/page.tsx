@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ThemeButton } from '@/components/theme-button/ThemeButton';
-import { LoginForm } from './components/login-form';
+import { LoginForm } from '../../components/forms/login/login-form';
 
 export default function Page() {
 

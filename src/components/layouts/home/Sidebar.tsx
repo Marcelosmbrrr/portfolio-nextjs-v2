@@ -1,15 +1,19 @@
-"use client"
+"use server"
 
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
+import { signOut } from "@/auth";
 
-export function Sidebar() {
-
-    const { logout } = useAuth();
+export async function Sidebar() {
 
     return (
         <aside id="logo-sidebar" className="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
-            <div className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+            <form
+                action={async () => {
+                    "use server"
+                    await signOut()
+                }}
+                className="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800"
+            >
                 <ul className="space-y-2 font-medium">
                     <li>
                         <Link href="projects" className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
@@ -43,16 +47,16 @@ export function Sidebar() {
                             <span className="flex-1 ms-3 whitespace-nowrap">Conta</span>
                         </Link>
                     </li>
-                    <li>
-                        <span onClick={() => logout()} className="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                    <button className="w-full flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                        <div className="flex">
                             <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M14.502 7.046h-2.5v-.928a2.122 2.122 0 0 0-1.199-1.954 1.827 1.827 0 0 0-1.984.311L3.71 8.965a2.2 2.2 0 0 0 0 3.24L8.82 16.7a1.829 1.829 0 0 0 1.985.31 2.121 2.121 0 0 0 1.199-1.959v-.928h1a2.025 2.025 0 0 1 1.999 2.047V19a1 1 0 0 0 1.275.961 6.59 6.59 0 0 0 4.662-7.22 6.593 6.593 0 0 0-6.437-5.695Z" />
                             </svg>
                             <span className="flex-1 ms-3 whitespace-nowrap">Sair</span>
-                        </span>
-                    </li>
+                        </div>
+                    </button>
                 </ul>
-            </div>
-        </aside>
+            </form>
+        </aside >
     )
 }

@@ -1,28 +1,27 @@
-import { apiClient } from "@/services/api/api";
+import { Project } from "@prisma/client";
+import { getProjects } from "@/actions/projects";
 
-interface IPost {
-    id: string;
-    name: string;
-    context: string[];
-    description: string;
-    tags: string[];
-    image_url: string;
-    created_at: string;
-    updated_at: string;
-}
-
-type data = { posts: IPost[], message: string };
+type Data = { projects: Project[], error: string };
 
 async function getData() {
-    return { posts: [], message: "" }
+    const res = await getProjects();
+
+    if (!res) {
+        return {
+            projects: [],
+            error: 'Nenhum projeto encontrado'
+        }
+    }
+
+    return res;
 }
 
 export async function ProjectList() {
 
-    const { posts, message }: data = await getData();
+    const { projects, error }: Data = await getData();
 
-    function postImage(image_url: string) {
-        if (image_url.includes("no-image")) {
+    function projectImage(image: string) {
+        if (image.includes("no-image")) {
             return (
                 <div className="h-56 w-full flex justify-center items-center">
                     <svg className="w-12 h-12 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
@@ -33,7 +32,7 @@ export async function ProjectList() {
             )
         }
         return (
-            <img className="rounded-t-lg h-full w-full" src={image_url} alt="post image" />
+            <img className="rounded-t-lg h-full w-full" src={process.env.STORAGE_URL + image} alt="project image" />
         )
     }
 
@@ -47,30 +46,30 @@ export async function ProjectList() {
                             d="M5 4 1 8l4 4m10-8 4 4-4 4M11 1 9 15" />
                     </svg>
                 </div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white"><span className="text-emerald-400">Postagens</span> recentes</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white"><span className="text-emerald-400">Projetos</span> recentes</h1>
             </div>
 
             <div className="flex justify-start flex-wrap pb-3 mt-5 gap-3 cursor-pointer rounded-l-lg">
 
-                {posts.length > 0 && posts.map((post: IPost) =>
+                {projects.length > 0 && projects.map((project: Project) =>
                     <div
                         className="max-w-sm bg-white border border-gray-200 rounded-lg shadow hover:shadow-[5px_5px_rgba(0,_98,_90,_0.4),_10px_10px_rgba(0,_98,_90,_0.3),_15px_15px_rgba(0,_98,_90,_0.2),_20px_20px_rgba(0,_98,_90,_0.1),_25px_25px_rgba(0,_98,_90,_0.05)] dark:bg-gray-800 dark:border-gray-700">
                         <div className='relative h-56 w-full overflow-y-hidden'>
-                            {postImage(post.image_url)}
+                            {projectImage(project.image)}
                         </div>
                         <div className="p-5">
                             <div className="flex justify-between items-center mb-2">
-                                <h5 className="text-2xl mr-2 font-bold tracking-tight text-gray-900 dark:text-white">{post.name}</h5>
+                                <h5 className="text-2xl mr-2 font-bold tracking-tight text-gray-900 dark:text-white">{project.name}</h5>
                                 <div className="bg-emerald-500 text-white text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-                                    {post.created_at}</div>
+                                    {project.stage}</div>
                             </div>
                             <div className="h-20 text-gray-800 dark:text-white break-words text-justify mt-2">
-                                {post.description}
+                                {project.description}
                             </div>
                             <div className="flex flex-wrap gap-1 mt-2">
-                                {post.tags.map((tag) =>
+                                {project.technologies.split(",").map((tech: string) =>
                                     <div className="min-w-fit text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium px-2.5 py-0.5 rounded border border-gray-700 inline-flex items-center justify-center">
-                                        {tag}
+                                        {tech}
                                     </div>
                                 )}
                             </div>
@@ -78,9 +77,9 @@ export async function ProjectList() {
                     </div>
                 )}
 
-                {posts.length === 0 &&
+                {error &&
                     <div>
-                        <span className="text-gray-800 dark:text-white">Nenhum post encontrado</span>
+                        <span className="text-gray-800 dark:text-white">{error}</span>
                     </div>
                 }
 

@@ -5,14 +5,13 @@ import * as z from "zod"
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSnackbar } from 'notistack';
+import { login } from '../../../app/login/action';
 import { LoginSchema } from '@/schemas/schemas';
-import { login } from '../action';
 
 export function LoginForm() {
 
-    const [pending, setPending] = React.useState<boolean>(false);
+    const [pending, startTransition] = React.useTransition();
     const { enqueueSnackbar } = useSnackbar();
-
 
     const form = useForm<z.infer<typeof LoginSchema>>({
         resolver: zodResolver(LoginSchema),
@@ -24,21 +23,17 @@ export function LoginForm() {
 
     const { register, handleSubmit, formState: { errors } } = form;
 
-    async function onSubmit(data: z.infer<typeof LoginSchema>) {
-        try {
-            setPending(true);
-            await login(data);
-        } catch (e: any) {
-            console.log(e)
-            enqueueSnackbar("Server Error", { variant: "error" });
-        } finally {
-            setPending(false);
-        }
-
+    function onSubmit(data: z.infer<typeof LoginSchema>) {
+        startTransition(() => {
+            login(data)
+                .then((data) => {
+                    enqueueSnackbar(data?.error, { variant: "error" })
+                })
+        })
     };
 
     return (
-        <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit(onSubmit)} >
+        <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
                 <label htmlFor="username" className="block mb-2 text-md font-medium text-gray-900">Username</label>
                 <input type="text" id="username" {...register('username')}

@@ -3,7 +3,7 @@ import authConfig from "./auth.config"
 
 const { auth } = NextAuth(authConfig);
 
-const DEFAULT_HOME_ROUTE = "/home"
+const DEFAULT_HOME_ROUTE = "/projects"
 
 // @ts-ignore
 export default auth((req) => {
@@ -12,14 +12,14 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
 
   const isApiRoute = nextUrl.pathname.includes("api");
-  const isLoginPageRoute = nextUrl.pathname.startsWith("/login");
-  const isProtectedRoute = ["/home", "/me"].includes(nextUrl.pathname);
+  const isPublicPageRoute = ["/login", "/"].includes(nextUrl.pathname);
+  const isProtectedRoute = ["/posts", "/projects", "/techs", "/me"].includes(nextUrl.pathname);
 
   if (isApiRoute) {
     return null;
   }
 
-  if (isLoginPageRoute) {
+  if (isPublicPageRoute) {
     if (isLoggedIn) {
       return Response.redirect(new URL(DEFAULT_HOME_ROUTE, nextUrl))
     }

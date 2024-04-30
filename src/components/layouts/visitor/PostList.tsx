@@ -1,25 +1,26 @@
-import { apiClient } from "@/services/api/api";
+import { Post } from "@prisma/client";
+import { getPosts } from "@/actions/posts";
 
-interface IProject {
-    id: string;
-    name: string;
-    phase: string;
-    description: string;
-    technology: string[];
-    image_url: string;
-}
-
-type data = { projects: IProject[], message: string };
+type Data = { posts: Post[], error: string };
 
 async function getData() {
-    return { projects: [], message: "" }
+    const res = await getPosts();
+
+    if (!res) {
+        return {
+            posts: [],
+            error: 'Nenhum posts encontrado'
+        }
+    }
+
+    return res;
 }
 
-export async function ProjectList() {
+export async function PostList() {
 
-    const { projects, message }: data = await getData();
+    const { posts, error }: Data = await getData();
 
-    function projectImage(image_url: string) {
+    function postImage(image_url: string) {
         if (image_url.includes("no-image")) {
             return (
                 <div className="h-56 w-full flex justify-center items-center">
@@ -31,7 +32,7 @@ export async function ProjectList() {
             )
         }
         return (
-            <img className="rounded-t-lg h-full w-full" src={image_url} alt="project image" />
+            <img className="rounded-t-lg h-full w-full" src={image_url} alt="post image" />
         )
     }
 
@@ -45,30 +46,31 @@ export async function ProjectList() {
                             d="M5 4 1 8l4 4m10-8 4 4-4 4M11 1 9 15" />
                     </svg>
                 </div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white"><span className="text-emerald-400">Projetos</span> recentes</h1>
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-white"><span className="text-emerald-400">Postagens</span> recentes</h1>
             </div>
 
             <div className="flex justify-start flex-wrap pb-3 mt-5 gap-3 cursor-pointer rounded-l-lg">
 
-                {projects.length > 0 && projects.map((project: IProject) =>
+                {posts.length > 0 && posts.map((post: Post) =>
                     <div
                         className="max-w-sm bg-white border border-gray-200 rounded-lg shadow hover:shadow-[5px_5px_rgba(0,_98,_90,_0.4),_10px_10px_rgba(0,_98,_90,_0.3),_15px_15px_rgba(0,_98,_90,_0.2),_20px_20px_rgba(0,_98,_90,_0.1),_25px_25px_rgba(0,_98,_90,_0.05)] dark:bg-gray-800 dark:border-gray-700">
                         <div className='relative h-56 w-full overflow-y-hidden'>
-                            {projectImage(project.image_url)}
+                            {postImage(post.image)}
                         </div>
                         <div className="p-5">
                             <div className="flex justify-between items-center mb-2">
-                                <h5 className="text-2xl mr-2 font-bold tracking-tight text-gray-900 dark:text-white">{project.name}</h5>
+                                <h5 className="text-2xl mr-2 font-bold tracking-tight text-gray-900 dark:text-white">{post.name}</h5>
                                 <div className="bg-emerald-500 text-white text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-                                    {project.phase}</div>
+                                    {post.created_at.getDate()}
+                                </div>
                             </div>
                             <div className="h-20 text-gray-800 dark:text-white break-words text-justify mt-2">
-                                {project.description}
+                                {post.description}
                             </div>
                             <div className="flex flex-wrap gap-1 mt-2">
-                                {project.technology.map((tech) =>
+                                {post.tags.split(",").map((tag: string) =>
                                     <div className="min-w-fit text-gray-800 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 text-sm font-medium px-2.5 py-0.5 rounded border border-gray-700 inline-flex items-center justify-center">
-                                        {tech}
+                                        {tag}
                                     </div>
                                 )}
                             </div>
@@ -76,9 +78,11 @@ export async function ProjectList() {
                     </div>
                 )}
 
-                <div>
-                    <span className="text-gray-800 dark:text-white">Nenhum projeto encontrado</span>
-                </div>
+                {posts.length === 0 &&
+                    <div>
+                        <span className="text-gray-800 dark:text-white">Nenhum post encontrado</span>
+                    </div>
+                }
 
             </div >
         </div >

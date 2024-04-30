@@ -1,21 +1,25 @@
 import * as React from 'react';
+import { getTechs } from '@/actions/techs';
+import { Tech } from '@prisma/client';
 
-interface ITech {
-    id: string;
-    name: string;
-    description: string;
-    icon: string[];
-}
-
-type data = { techs: ITech[], message: string };
+type Data = { techs: Tech[], error: string };
 
 async function getData() {
-    return { techs: [], message: "" }
+    const res = await getTechs();
+
+    if (!res) {
+        return {
+            techs: [],
+            error: 'Nenhum post encontrado'
+        }
+    }
+
+    return res;
 }
 
 export async function TechList() {
 
-    const { techs, message }: data = await getData();
+    const { techs, error }: Data = await getData();
 
     function getIconCdn(icon: string) {
         return `https://cdn.jsdelivr.net/gh/devicons/devicon/icons/${icon}.svg`;
@@ -35,7 +39,7 @@ export async function TechList() {
             </div>
             <div className='flex flex-wrap gap-8 mt-6'>
 
-                {techs.length > 0 && techs.map((tech: ITech) =>
+                {techs.length > 0 && techs.map((tech: Tech) =>
                     <div className="flex flex-col p-1 gap-2 basis-72 h-36">
                         <div className='h-auto flex gap-2'>
                             {tech.icon.map((icon) =>

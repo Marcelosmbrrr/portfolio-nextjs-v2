@@ -1,10 +1,11 @@
+// @ts-nocheck
+
 import NextAuth from "next-auth"
 
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { db } from "./services/database/database"
 import authConfig from "./auth.config"
 import { getUserById } from "./actions/user"
-import { Role } from "@prisma/client"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
@@ -14,25 +15,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return token;
       }
 
-      const user = await getUserById(token.sub);
-
-      if (!user) {
-        return token;
-      }
-
-      token.role = user.Role;
-
       return token;
+
     },
     async session({ session, token }) {
 
-      // Put user id into session object
+      // Extra data to session
       if (token.sub && session.user) {
-        session.user.id = token.sub;
-      }
+        
+        const user = await getUserById(token.sub);
 
-      if (token.role && session.user) {
-        session.user.role = token.role as Role;
+        session.user.id = token.sub;
+        session.user.whatsapp = user?.whatsapp;
+        session.user.username = user?.username
+
       }
 
       return session;

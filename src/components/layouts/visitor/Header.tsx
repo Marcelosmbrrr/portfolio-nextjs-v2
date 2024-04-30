@@ -1,11 +1,9 @@
 "use client"
 
 import Link from "next/link";
-import { useTheme } from "@/context/ThemeContext";
+import { ThemeButton } from "@/components/theme-button/ThemeButton";
 
 export function Header() {
-
-    const { ThemeButton } = useTheme();
 
     return (
         <header>
@@ -34,12 +32,12 @@ export function Header() {
                                 </a>
                             </li>
                             <li className="flex items-center text-gray-800 dark:text-white rounded lg:p-0 dark:hover:text-emerald-500 cursor-pointer">
-                                <Link href="auth/login" className="flex py-2 text-gray-800 dark:text-white rounded lg:p-0 hover:text-emerald-500 dark:hover:text-emerald-500 cursor-pointer">
+                                <Link href="login" className="flex py-2 text-gray-800 dark:text-white rounded lg:p-0 hover:text-emerald-500 dark:hover:text-emerald-500 cursor-pointer">
                                     Login
                                 </Link>
                             </li>
                             <li className="flex items-center text-gray-800 dark:text-white rounded lg:p-0 hover:text-emerald-500 cursor-pointer">
-                                {ThemeButton()}
+                                <ThemeButton />
                             </li>
                         </ul>
                     </div>

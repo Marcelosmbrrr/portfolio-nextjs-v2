@@ -19,7 +19,7 @@ export async function login(form: z.infer<typeof LoginSchema>) {
         await signIn("credentials", {
             username,
             password,
-            redirectTo: "/home"
+            redirectTo: "/projects"
         })
     } catch (e) {
         if (e instanceof AuthError) {

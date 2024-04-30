@@ -19,9 +19,6 @@ export async function getUserById(id: string) {
         const user = await db.user.findUnique({
             where: {
                 id: id
-            },
-            include: {
-                Role: true
             }
         })
 
