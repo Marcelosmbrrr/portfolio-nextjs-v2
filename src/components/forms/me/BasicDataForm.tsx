@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as z from "zod"
+import { auth } from '@/auth';
 import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -26,7 +27,7 @@ export function BasicDataForm() {
     const fetchData = async () => {
         try {
             setPending(true);
-            const response = await apiClient.get("api/admin/me");
+            const response = await apiClient.get("api/admin/me/basic-data");
             setValue('name', response.data.user.name);
             setValue('email', response.data.user.email);
             setValue('username', response.data.user.username);

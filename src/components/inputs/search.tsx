@@ -16,9 +16,9 @@ export function Search(props: Props) {
     function handleSearch(term: string) {
         const params = new URLSearchParams(searchParams);
         if (term) {
-            params.set('query', term);
+            params.set('search', term);
         } else {
-            params.delete('query');
+            params.delete('search');
         }
         replace(`${pathname}?${params.toString()}`);
     }
@@ -32,7 +32,7 @@ export function Search(props: Props) {
                 onChange={(e) => {
                     handleSearch(e.target.value);
                 }}
-                defaultValue={searchParams.get('query')?.toString()}
+                defaultValue={searchParams.get('search')?.toString()}
             />
         </div>
     )

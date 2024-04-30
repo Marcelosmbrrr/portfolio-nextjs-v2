@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { auth } from '@/auth';
 import { BasicDataForm } from '@/components/forms/me/BasicDataForm';
 import { ChangePasswordForm } from '@/components/forms/me/ChangePasswordForm';
 

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import * as z from "zod"
+import { auth } from '@/auth';
 import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';

@@ -61,7 +61,8 @@ export async function ProjectList() {
                             <div className="flex justify-between items-center mb-2">
                                 <h5 className="text-2xl mr-2 font-bold tracking-tight text-gray-900 dark:text-white">{project.name}</h5>
                                 <div className="bg-emerald-500 text-white text-xs font-medium me-2 px-2.5 py-0.5 rounded">
-                                    {project.stage}</div>
+                                    {project.stage}
+                                </div>
                             </div>
                             <div className="h-20 text-gray-800 dark:text-white break-words text-justify mt-2">
                                 {project.description}
